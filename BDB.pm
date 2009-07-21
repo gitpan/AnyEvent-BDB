@@ -36,17 +36,13 @@ use BDB ();
 
 use base Exporter::;
 
-our $VERSION = '1.0';
+our $VERSION = '1.1';
 our $WATCHER;
 
-$WATCHER = AnyEvent::post_detect {
-   if ($AnyEvent::MODEL eq "AnyEvent::Impl::EV") {
-      $WATCHER = EV::io (BDB::poll_fileno, &EV::READ, \&BDB::poll_cb);
-   } else {
-      our $FH; open $FH, "<&=" . BDB::poll_fileno;
-      $WATCHER = AnyEvent->io (fh => $FH, poll => 'r', cb => \&BDB::poll_cb);
-   }
+my $guard = AnyEvent::post_detect {
+   $WATCHER = AnyEvent->io (fh => BDB::poll_fileno, poll => 'r', cb => \&BDB::poll_cb);
 };
+$WATCHER ||= $guard;
 
 BDB::_on_next_submit \&AnyEvent::detect;
 

@@ -10,7 +10,7 @@ my $mm = MM->new({
     VERSION_FROM => "BDB.pm",
     PREREQ_PM    => {
        BDB       => 1.5,
-       AnyEvent  => 3.4,
+       AnyEvent  => 3.81,
     },
 });
 
